@@ -36,7 +36,11 @@ Products, all batched and differentiable, for any `Cl(p, q, r)`:
 | Right contraction | `right_contraction(a, b)` |
 | Regressive product | `regressive_prod(a, b)` — non-degenerate metrics only (raises on `r > 0`) |
 | Reverse | `reverse(x)` |
+| Grade involution | `grade_involution(x)` |
+| Clifford conjugation | `clifford_conjugation(x)` |
 | Dual (`x I⁻¹`) | `dual(x)` — non-degenerate metrics only (raises on `r > 0`); `compile=True` to fuse the op |
+| Grade projection | `grade_projection(x, k)` — keeps grade k, zeros the rest |
+| Norm (`⟨x x̃⟩₀`) | `norm_sq(x)` — metric-weighted squared norm; `compile=True` to fuse |
 | Rotor application (`R~ x R`) | `apply_bivector(biv, x)` / `compile_bivector` + `apply_rotor` |
 
 Metrics: any signature `Cl(p, q, r)`, where each generator squares to `+1`,
@@ -71,7 +75,7 @@ So the scalar is index `0` and `e_i` is index `2^i`. This is bit-pattern orderin
 import torch
 from cliffordcuda import CliffordAlgebra
 
-# Cl(6, 1): signature (+, +, +, +, +, +, -). n = 7, which rotor application needs.
+# Cl(6, 1): signature (+, +, +, +, +, +, -)
 cl = CliffordAlgebra(metric=[1, 1, 1, 1, 1, 1, -1], device="cuda")
 
 a = torch.randn(8, cl.dim, device="cuda", requires_grad=True)   # (batch, 2^n) = (8, 128), fp32
