@@ -71,15 +71,15 @@ So the scalar is index `0` and `e_i` is index `2^i`. This is bit-pattern orderin
 import torch
 from cliffordcuda import CliffordAlgebra
 
-# Cl(4, 1): generators with signature (+, +, +, +, -)
-cl = CliffordAlgebra(metric=[1, 1, 1, 1, -1], device="cuda")
+# Cl(6, 1): signature (+, +, +, +, +, +, -). n = 7, which rotor application needs.
+cl = CliffordAlgebra(metric=[1, 1, 1, 1, 1, 1, -1], device="cuda")
 
-a = torch.randn(8, cl.dim, device="cuda")   # (batch, 2^n) = (8, 32), fp32 cuda
+a = torch.randn(8, cl.dim, device="cuda", requires_grad=True)   # (batch, 2^n) = (8, 128), fp32
 b = torch.randn(8, cl.dim, device="cuda")
 
-c = cl.geom_prod(a, b)          # geometric product -> (8, 32)
+c = cl.geom_prod(a, b)          # geometric product -> (8, 128)
 w = cl.wedge_prod(a, b)         # wedge / inner / left_contraction / ... the same
-c.sum().backward()
+c.sum().backward()              # gradient flows back into a
 
 # Rotor sandwich R~ x R. The bivector is in lex-pair order (matching
 # torch.triu_indices(cl.n, cl.n, offset=1)), with C(n, 2) components:
