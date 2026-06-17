@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cliffordcuda"
+version = "0.1.0"
+description = "Custom CUDA kernels for Clifford / geometric algebra products and rotor application in arbitrary Cl(p, q, r)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "torch>=2.5",
+    "numpy",
+    "ortools",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+bench = [
+    "matplotlib",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cliffordcuda = [
+    "kernels/ga/*.cu",
+    "kernels/rotor/*.cu",
+    "_data/perm/*.pt",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

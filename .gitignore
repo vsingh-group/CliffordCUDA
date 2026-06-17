@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# torch JIT cache (generated at runtime)
+.torch_extensions/
+
+# user-generated perm cache (the shipped ones live under src/cliffordcuda/_data/perm/)
+~/.cache/cliffordcuda/
+
+# benchmark outputs
+benchmark/results/
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
