@@ -163,25 +163,7 @@ Note that this repo never actually builds the rotor, but instead applies the adj
 
 ## Results
 
-Measured on an A100. Each panel divides the other library's time or memory
-by CliffordCUDA's, so higher means CliffordCUDA is faster or uses less memory,
-plotted against `n` with one line per library.
-
-Forward and backward speed:
-
-![Forward speed](figures/speed_improvements_fwd.png)
-![Backward speed](figures/speed_improvements_bwd.png)
-
-Forward and backward peak memory:
-
-![Forward memory](figures/memory_improvements_fwd.png)
-![Backward memory](figures/memory_improvements_bwd.png)
-
-Parametrized rotor, `RotorLayer` vs `ComposingLinearLayers` (ratio =
-ComposingLinearLayers / CliffordCUDA, one line per batch, across inference and
-training, speed and memory):
-
-![Parametrized rotor](figures/speed_memory_rotor_parametrized.png)
+Measured on an A100.
 
 ### Raw timings
 
