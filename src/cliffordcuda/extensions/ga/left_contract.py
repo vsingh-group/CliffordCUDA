@@ -129,6 +129,10 @@ def left_contract(a: torch.Tensor, b: torch.Tensor, metric=None) -> torch.Tensor
     if (1 << n) != dim:
         raise ValueError(f"dim must be a power of two, got {dim}")
     metric_key = _normalize_metric(n, metric)
+    if a.is_cuda:                                       # tile past the standard kernel's device limit
+        from .geom_prod_tiled import _STD_KERNEL_MAX_N, _device_max_fit, left_contract_tiled_fused
+        if n > min(_STD_KERNEL_MAX_N, _device_max_fit(str(a.device), 0 in metric_key)):
+            return left_contract_tiled_fused(a, b, metric=metric)
     ps, _ = build_packed_sign(n, str(a.device), metric_key)
     pv = build_left_contract_valid(n, str(a.device), metric_key)
     return _LeftContractFunc.apply(a, b, ps, pv, n, metric_key, False)

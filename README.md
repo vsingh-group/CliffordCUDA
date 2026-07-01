@@ -1,8 +1,7 @@
 # cliffordcuda
 
 `cliffordcuda` is focused on doing Clifford (geometric) algebra operations fast
-at scale. The products and rotor application run as CUDA kernels over batched
-multivectors in arbitrary `Cl(p, q, r)`. They are available as `nn.Module` layers with learnable parameters.
+at scale. Most functions are available in arbitrary `Cl(p, q, r)`. They are available as `nn.Module` layers with learnable parameters.
 
 - [Setup](#setup)
 - [What's supported](#whats-supported)
@@ -24,8 +23,6 @@ Needs an NVIDIA GPU with CUDA, `torch>=2.5`, `numpy`, and `ortools`. Kernels are
 compiled on first use. Inputs must be CUDA float32 tensors.
 
 ## What's supported
-
-Products, all batched and differentiable, for any `Cl(p, q, r)`:
 
 | Operation | Method |
 |---|---|

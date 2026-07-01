@@ -253,10 +253,26 @@ class _GeomProdFunc(torch.autograd.Function):
 def geom_prod(a: torch.Tensor, b: torch.Tensor, metric=None) -> torch.Tensor:
     """Cl(p, q, r) GP. Default variant: cp.async operands, SMEM-staged sign row,
     K-unroll. metric=None -> Cl(n, 0). Differentiable for any Cl(p, q, r)
-    including degenerate (via build_packed_sign_bwd direct-sigma LUTs)."""
-    a, b, ps, pv = _prep(a, b, metric)
-    dim = a.size(-1); n = dim.bit_length() - 1
+    including degenerate (via build_packed_sign_bwd direct-sigma LUTs).
+
+    Works for any n: the standard kernel is used while it is both compiled and
+    fits this GPU's shared memory (the fit is queried per-device, not a fixed n);
+    beyond that it transparently falls back to the tiled fused product, which is
+    itself differentiable (forward and both backward sums run on the tiled kernel)."""
+    dim = a.size(-1)
+    n = dim.bit_length() - 1
+    if (1 << n) != dim:
+        raise ValueError(f"dim must be a power of two, got {dim}")
     metric_key = _normalize_metric(n, metric)
+    if a.is_cuda:
+        # Tile once n exceeds what the standard kernel can run on THIS device:
+        # min(its compiled instantiation ceiling, the device shared-memory fit).
+        # The tiled fused kernel is differentiable (fused forward + fused backward).
+        from .geom_prod_tiled import (
+            _STD_KERNEL_MAX_N, _device_max_fit, geom_prod_tiled_fused)
+        if n > min(_STD_KERNEL_MAX_N, _device_max_fit(str(a.device), 0 in metric_key)):
+            return geom_prod_tiled_fused(a, b, metric=metric)
+    a, b, ps, pv = _prep(a, b, metric)
     return _GeomProdFunc.apply(a, b, ps, pv, n, metric_key)
 
 

@@ -192,6 +192,10 @@ def regressive_prod(a: torch.Tensor, b: torch.Tensor, metric=None) -> torch.Tens
     if (1 << n) != dim:
         raise ValueError(f"dim must be a power of two, got {dim}")
     metric_key = _normalize_metric(n, metric)
+    if a.is_cuda:                                       # tile past the standard kernel's device limit
+        from .geom_prod_tiled import _STD_KERNEL_MAX_N, _device_max_fit, regressive_prod_tiled_fused
+        if n > min(_STD_KERNEL_MAX_N, _device_max_fit(str(a.device), 0 in metric_key)):
+            return regressive_prod_tiled_fused(a, b, metric=metric)
     ps, pv = build_regressive_sign_fwd(n, str(a.device), metric_key)
     _ds, dp = _build_dual(n, str(a.device), metric_key)
     return _RegressiveProdFunc.apply(a, b, ps, pv, dp, n, metric_key, False)
