@@ -18,6 +18,7 @@ from .extensions.ga.right_contract import (
 from .extensions.ga.regressive_prod import (
     regressive_prod, regressive_prod_skip, regressive_prod_subset_grade,
 )
+from .extensions.ga.inverse import inverse, reverse
 from .layers import (
     GeometricProductLayer, WedgeProductLayer, InnerProductLayer,
     LeftContractionLayer, RightContractionLayer, RegressiveProductLayer,
@@ -34,6 +35,7 @@ __all__ = [
     "left_contract", "left_contract_skip", "left_contract_subset_grade",
     "right_contract", "right_contract_skip", "right_contract_subset_grade",
     "regressive_prod", "regressive_prod_skip", "regressive_prod_subset_grade",
+    "inverse", "reverse",
     "GeometricProductLayer", "WedgeProductLayer", "InnerProductLayer",
     "LeftContractionLayer", "RightContractionLayer", "RegressiveProductLayer",
     "RotorLayer",

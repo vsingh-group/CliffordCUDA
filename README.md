@@ -32,6 +32,7 @@ compiled on first use. Inputs must be CUDA float32 tensors.
 | Left contraction | `left_contraction(a, b)` |
 | Right contraction | `right_contraction(a, b)` |
 | Regressive product | `regressive_prod(a, b)` — non-degenerate metrics only (raises on `r > 0`) |
+| Inverse (`x⁻¹`) | `inverse(x)` — versor/blade `x̃/(x x̃)` when it applies, else the matrix-representation inverse; any `Cl(p, q, r)` including degenerate |
 | Reverse | `reverse(x)` |
 | Grade involution | `grade_involution(x)` |
 | Clifford conjugation | `clifford_conjugation(x)` |

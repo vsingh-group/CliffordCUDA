@@ -41,6 +41,7 @@ from .extensions.ga.inner_prod.chunk import inner_prod as _inner_prod
 from .extensions.ga.left_contract import left_contract as _left_contract
 from .extensions.ga.right_contract import right_contract as _right_contract
 from .extensions.ga.regressive_prod import regressive_prod as _regressive_prod
+from .extensions.ga.inverse import inverse as _inverse
 
 from .extensions.rotor.eigh_exp import EighExpFunc
 from .extensions.rotor.givens_factor import GivensFactorFunc
@@ -172,6 +173,23 @@ class CliffordAlgebra:
         _validate._check_mv(a, "a", self.dim, self.device, self.dtype)
         _validate._check_mv(b, "b", self.dim, self.device, self.dtype)
         return _regressive_prod(a, b, metric=self.metric)
+
+    # ── Inverse ───────────────────────────────────────────────────────
+    def inverse(self, x, method="auto"):
+        """Multivector inverse ``x^-1`` in Cl(p, q, r).
+
+        Versor/blade inputs (``x x~`` scalar — rotors, motors, blades) take the
+        exact fast path ``x~/(x x~)``, correct in fp32 at every n.  General
+        multivectors use the matrix-representation inverse — for any
+        non-degenerate signature, and for degenerate metrics via a nilpotent
+        peel over the non-degenerate part (~40-100x faster than the dense solve
+        at n=13); the dense LU solve is only a last resort when the
+        representation does not fit.  Raises if ``x`` is not invertible.
+
+        method: "auto" (default), "versor", "rep", or "lu".
+        """
+        _validate._check_mv(x, "x", self.dim, self.device, self.dtype)
+        return _inverse(x, metric=self.metric, method=method)
 
     # ── Reversion ─────────────────────────────────────────────────────
     def reverse(self, x):
